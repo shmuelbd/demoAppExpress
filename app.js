@@ -48,7 +48,7 @@ app.post("/webhook", (req, res) => {
             axios({
                 method: "POST", // Required, HTTP method, a string, e.g. POST, GET
                 url:
-                    "https://graph.facebook.com/v12.0/" +
+                    "https://graph.facebook.com/v15.0/" +
                     phone_number_id +
                     "/messages?access_token=" +
                     token,
@@ -56,42 +56,14 @@ app.post("/webhook", (req, res) => {
                     messaging_product: "whatsapp",
                     to: from,
                     recipient_type: "individual",
-                    type: "interactive",
-                    "interactive": {
-                        "type": "button",
-                        "header": {
-                            "type": "text",
-                            "text": "your text"
-
-                        },
-                        "body": {
-                            "text": "your-text-body-content"
-                        },
-                        "footer": {
-                            "text": "your-text-footer-content"
-                        },
-                        "action": {
-                            "buttons": [
-                                {
-                                    "type": "reply",
-                                    "reply": {
-                                        "id": "unique-postback-id",
-                                        "title": "First Button’s Title"
-                                    }
-                                },
-                                {
-                                    "type": "reply",
-                                    "reply": {
-                                        "id": "unique-postback-id",
-                                        "title": "Second Button’s Title"
-                                    }
-                                }
-                            ]
+                    "type": "video",
+                    "video": {
+                        "link": "https://www.youtube.com/watch?v=LjQpXucKjaw"
+                        "provider": {
+                            "name": "provider-name"
                         }
+                        "caption": "your-video-caption"
                     }
-
-
-
 
 
                 },
