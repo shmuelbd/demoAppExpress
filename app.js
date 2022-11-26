@@ -57,45 +57,38 @@ app.post("/webhook", (req, res) => {
                     to: from,
                     recipient_type: "individual",
                     type: "interactive",
-                    interactive: {
-                        type: "list",
-                        header: {
-                            type: "text",
-                            text: "your-header-content"
+                    "interactive": {
+                        "type": "button",
+                        "header": {
+                            "type": "text",
+                            "text": "your text"
+
                         },
-                        body: {
-                            text: "your-text-message-content"
+                        "body": {
+                            "text": "your-text-body-content"
                         },
-                        footer: {
-                            text: "your-footer-content"
+                        "footer": {
+                            "text": "your-text-footer-content"
                         },
-                        action: {
-                            button: "cta-button-content",
-                            sections: [
+                        "action": {
+                            "buttons": [
                                 {
-                                    title: "your-section-title-content",
-                                    rows: [
-                                        {
-                                            id: "1",
-                                            title: "row-title-content",
-                                            description: "row-description-content",
-                                        }
-                                    ]
+                                    "type": "reply",
+                                    "reply": {
+                                        "id": "unique-postback-id",
+                                        "title": "First Button’s Title"
+                                    }
                                 },
                                 {
-                                    title: "your-section-title-content",
-                                    rows: [
-                                        {
-                                            id: "2",
-                                            title: "row-title-content",
-                                            description: "row-description-content",
-                                        }
-                                    ]
-                                },
+                                    "type": "reply",
+                                    "reply": {
+                                        "id": "unique-postback-id",
+                                        "title": "Second Button’s Title"
+                                    }
+                                }
                             ]
                         }
                     }
-
 
 
 
