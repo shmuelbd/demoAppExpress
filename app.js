@@ -69,7 +69,7 @@ app.post("/webhook", (req, res) => {
                 },
                 headers: { "Content-Type": "application/json" },
             }).then(function (response) {
-                console.log(response);
+                console.log(JSON.stringify(response));
                 res.sendStatus(200);
             })
                 .catch(function (error) {
