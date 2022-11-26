@@ -58,10 +58,10 @@ app.post("/webhook", (req, res) => {
                     recipient_type: "individual",
                     "type": "video",
                     "video": {
-                        "link": "https://www.youtube.com/watch?v=LjQpXucKjaw"
+                        "link": "https://www.youtube.com/watch?v=LjQpXucKjaw",
                         "provider": {
                             "name": "provider-name"
-                        }
+                        },
                         "caption": "your-video-caption"
                     }
 
