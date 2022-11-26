@@ -57,12 +57,44 @@ app.post("/webhook", (req, res) => {
                         to: from,
                         recipient_type: "individual",
                         type: "interactive",
-                        interactive: {
-                            type: "button",
-                            header: {},
-                            body: { msg_body },
-                            footer: {},
-                            action: {}
+                        "interactive": {
+                            "type": "list",
+                            "header": {
+                                "type": "text",
+                                "text": "your-header-content"
+                            },
+                            "body": {
+                                "text": "your-text-message-content"
+                            },
+                            "footer": {
+                                "text": "your-footer-content"
+                            },
+                            "action": {
+                                "button": "cta-button-content",
+                                "sections": [
+                                    {
+                                        "title": "your-section-title-content",
+                                        "rows": [
+                                            {
+                                                "id": "unique-row-identifier",
+                                                "title": "row-title-content",
+                                                "description": "row-description-content",
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "title": "your-section-title-content",
+                                        "rows": [
+                                            {
+                                                "id": "unique-row-identifier",
+                                                "title": "row-title-content",
+                                                "description": "row-description-content",
+                                            }
+                                        ]
+                                    },
+
+                                ]
+                            }
                         }
 
                     },
