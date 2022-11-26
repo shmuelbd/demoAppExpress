@@ -55,15 +55,14 @@ app.post("/webhook", (req, res) => {
                     data: {
                         messaging_product: "whatsapp",
                         to: from,
-                        "recipient_type": "individual",
-                        "to": "whatsapp-id",
-                        "type": "interactive",
-                        "interactive": {
-                            "type": "button",
-                            "header": {},
-                            "body": { msg_body },
-                            "footer": {},
-                            "action": {}
+                        recipient_type: "individual",
+                        type: "interactive",
+                        interactive: {
+                            type: "button",
+                            header: {},
+                            body: { msg_body },
+                            footer: {},
+                            action: {}
                         }
 
                     },
