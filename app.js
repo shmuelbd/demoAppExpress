@@ -44,68 +44,6 @@ app.post("/webhook", (req, res) => {
             let from = req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
             let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body; // extract the message text from the webhook payload
 
-            if (msg_body === "1") {
-                axios({
-                    method: "POST", // Required, HTTP method, a string, e.g. POST, GET
-                    url:
-                        "https://graph.facebook.com/v15.0/" +
-                        phone_number_id +
-                        "/messages?access_token=" +
-                        token,
-                    data: {
-                        to: from,
-                        type: "interactive",
-                        "interactive": {
-                            "type": "list",
-                            "header": {
-                                "type": "text",
-                                "text": "your-header-content"
-                            },
-                            "body": {
-                                "text": "your-text-message-content"
-                            },
-                            "footer": {
-                                "text": "your-footer-content"
-                            },
-                            "action": {
-                                "button": "cta-button-content",
-                                "sections": [
-                                    {
-                                        "title": "your-section-title-content",
-                                        "rows": [
-                                            {
-                                                "id": "unique-row-identifier",
-                                                "title": "row-title-content",
-                                                "description": "row-description-content",
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "title": "your-section-title-content",
-                                        "rows": [
-                                            {
-                                                "id": "unique-row-identifier",
-                                                "title": "row-title-content",
-                                                "description": "row-description-content",
-                                            }
-                                        ]
-                                    },
-
-                                ]
-                            }
-                        }
-
-                    },
-                    headers: { "Content-Type": "application/json" },
-                }).then(function (response) {
-                    console.log(response);
-                    res.sendStatus(200);
-                })
-                    .catch(function (error) {
-                        console.log(error);
-                    });;
-            }
-
 
             axios({
                 method: "POST", // Required, HTTP method, a string, e.g. POST, GET
@@ -117,7 +55,52 @@ app.post("/webhook", (req, res) => {
                 data: {
                     messaging_product: "whatsapp",
                     to: from,
-                    text: { body: "Ack: " + msg_body },
+                    recipient_type: "individual",
+                    type: "interactive",
+                    interactive: {
+                        type: "list",
+                        header: {
+                            type: "text",
+                            text: "your-header-content"
+                        },
+                        body: {
+                            text: "your-text-message-content"
+                        },
+                        footer: {
+                            text: "your-footer-content"
+                        },
+                        action: {
+                            button: "cta-button-content",
+                            sections: [
+                                {
+                                    title: "your-section-title-content",
+                                    rows: [
+                                        {
+                                            id: "1",
+                                            title: "row-title-content",
+                                            description: "row-description-content",
+                                        }
+                                    ]
+                                },
+                                {
+                                    title: "your-section-title-content",
+                                    rows: [
+                                        {
+                                            id: "2",
+                                            title: "row-title-content",
+                                            description: "row-description-content",
+                                        }
+                                    ]
+                                },
+                            ]
+                        }
+                    }
+
+
+
+
+
+
                 },
                 headers: { "Content-Type": "application/json" },
             }).then(function (response) {
