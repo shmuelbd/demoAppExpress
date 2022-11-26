@@ -101,7 +101,7 @@ app.post("/webhook", (req, res) => {
                 res.sendStatus(200);
             })
                 .catch(function (error) {
-                    console.log(error.data)
+                    console.log(JSON.stringify(error))
                 });;
         }
     } else {
