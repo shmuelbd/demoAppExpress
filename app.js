@@ -43,6 +43,41 @@ app.post("/webhook", (req, res) => {
                 req.body.entry[0].changes[0].value.metadata.phone_number_id;
             let from = req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
             let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body; // extract the message text from the webhook payload
+
+            if (msg_body == 1) {
+                axios({
+                    method: "POST", // Required, HTTP method, a string, e.g. POST, GET
+                    url:
+                        "https://graph.facebook.com/v12.0/" +
+                        phone_number_id +
+                        "/messages?access_token=" +
+                        token,
+                    data: {
+                        messaging_product: "whatsapp",
+                        to: from,
+                        "recipient_type": "individual",
+                        "to": "whatsapp-id",
+                        "type": "interactive",
+                        "interactive": {
+                            "type": "button",
+                            "header": {},
+                            "body": { msg_body },
+                            "footer": {},
+                            "action": {}
+                        }
+
+                    },
+                    headers: { "Content-Type": "application/json" },
+                }).then(function (response) {
+                    console.log(response);
+                    res.sendStatus(200);
+                })
+                    .catch(function (error) {
+                        console.log(error);
+                    });;
+            }
+
+
             axios({
                 method: "POST", // Required, HTTP method, a string, e.g. POST, GET
                 url:
