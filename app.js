@@ -16,7 +16,7 @@ const token = process.env.WHATSAPP_TOKEN;
 const request = require("request")
 const express = require("express")
 const body_parser = require("body-parser")
-const axios = require("axios").default
+const axios = require("axios")
 const app = express().use(body_parser.json()); // creates express http server
 
 // Sets server port and logs message on success
@@ -28,7 +28,7 @@ app.post("/webhook", (req, res) => {
     let body = req.body;
 
     // Check the Incoming webhook message
-    console.log("Incoming ", body);
+    console.log("Incoming ", JSON.stringify(body));
 
     // info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
     if (req.body.object) {
@@ -56,9 +56,14 @@ app.post("/webhook", (req, res) => {
                     text: { body: "Ack: " + msg_body },
                 },
                 headers: { "Content-Type": "application/json" },
-            });
+            }).then(function (response) {
+                console.log(response);
+                res.sendStatus(200);
+            })
+                .catch(function (error) {
+                    console.log(error);
+                });;
         }
-        res.sendStatus(200);
     } else {
         // Return a '404 Not Found' if event is not from a WhatsApp API
         res.sendStatus(404);
