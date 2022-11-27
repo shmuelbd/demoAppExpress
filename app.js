@@ -53,7 +53,6 @@ app.post("/webhook", (req, res) => {
                     "/messages?access_token=" +
                     token,
                 data: {
-                    messaging_product: "whatsapp",
                     to: from,
                     recipient_type: "individual",
                     "type": "video",
