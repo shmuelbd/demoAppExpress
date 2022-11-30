@@ -53,18 +53,9 @@ app.post("/webhook", (req, res) => {
                     "/messages?access_token=" +
                     token,
                 data: {
+                    messaging_product: "whatsapp",
                     to: from,
-                    recipient_type: "individual",
-                    "type": "video",
-                    "video": {
-                        "link": "https://www.youtube.com/watch?v=LjQpXucKjaw",
-                        "provider": {
-                            "name": "provider-name"
-                        },
-                        "caption": "your-video-caption"
-                    }
-
-
+                    text: { body: "Ack: " + msg_body },
                 },
                 headers: { "Content-Type": "application/json" },
             }).then(function (response) {
