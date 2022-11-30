@@ -29,7 +29,10 @@ app.post("/webhook", (req, res) => {
 
     // Check the Incoming webhook message
     console.log(JSON.stringify(req.body, null, 2));
-    const text = "סטטוס ההזמנה שלכם שונה:📦"
+    const text = "סטטוס ההזמנה שלכם שונה:📦  %0a %0a  •  ✅ 13/11/22 15:38 ההזמנה התקבל"
+
+
+
     // info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
     if (req.body.object) {
         if (
