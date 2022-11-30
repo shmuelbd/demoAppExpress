@@ -28,7 +28,7 @@ app.post("/webhook", (req, res) => {
     let body = req.body;
 
     // Check the Incoming webhook message
-    console.log("Incoming ", JSON.stringify(body));
+    console.log(JSON.stringify(req.body, null, 2));
 
     // info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
     if (req.body.object) {
@@ -43,29 +43,22 @@ app.post("/webhook", (req, res) => {
                 req.body.entry[0].changes[0].value.metadata.phone_number_id;
             let from = req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
             let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body; // extract the message text from the webhook payload
-
-
             axios({
                 method: "POST", // Required, HTTP method, a string, e.g. POST, GET
                 url:
-                    "https://graph.facebook.com/v15.0/" +
+                    "https://graph.facebook.com/v12.0/" +
                     phone_number_id +
                     "/messages?access_token=" +
                     token,
                 data: {
                     messaging_product: "whatsapp",
                     to: from,
-                    text: { body: "Ackgg: " + msg_body },
+                    text: { body: "Ack45: " + msg_body },
                 },
                 headers: { "Content-Type": "application/json" },
-            }).then(function (response) {
-                console.log(JSON.stringify(response));
-                res.sendStatus(200);
-            })
-                .catch(function (error) {
-                    console.log(JSON.stringify(error))
-                });;
+            });
         }
+        res.sendStatus(200);
     } else {
         // Return a '404 Not Found' if event is not from a WhatsApp API
         res.sendStatus(404);
