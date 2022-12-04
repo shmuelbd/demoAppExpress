@@ -1,45 +1,83 @@
-const { WhatsAppAPI, Handlers, Types } = require("whatsapp-api-js");
-const { Text, Media, Contacts } = Types;
+const token = process.env.WHATSAPP_TOKEN;
 
-const Token = "YOUR_TOKEN";
+// Imports dependencies and set up http server
+const request = require("request"),
+    express = require("express"),
+    body_parser = require("body-parser"),
+    axios = require("axios").default,
+    app = express().use(body_parser.json()); // creates express http server
 
-const Whatsapp = new WhatsAppAPI(Token);
 
-// Assuming post is called on a POST request to your server
-function post(e) {
-    // The Handlers work with any middleware, as long as you pass the correct data
-    return Handlers.post(JSON.parse(e.data), onMessage);
-}
+// Sets server port and logs message on success
+app.listen(process.env.PORT || 1337, () => console.log("webhook is listening"));
 
-async function onMessage(phoneID, phone, message, name, raw_data) {
-    console.log(`User ${phone} (${name}) sent to bot ${phoneID} ${JSON.stringify(message)}`);
+// Accepts POST requests at /webhook endpoint
+app.post("/webhook", (req, res) => {
+    // Parse the request body from the POST
+    let body = req.body;
 
-    let promise;
+    // Check the Incoming webhook message
+    console.log(JSON.stringify(req.body, null, 2));
 
-    if (message.type === "text") promise = Whatsapp.sendMessage(phoneID, phone, new Text(`*${name}* said:\n\n${message.text.body}`), message.id);
+    // info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
+    if (req.body.object) {
+        if (
+            req.body.entry &&
+            req.body.entry[0].changes &&
+            req.body.entry[0].changes[0] &&
+            req.body.entry[0].changes[0].value.messages &&
+            req.body.entry[0].changes[0].value.messages[0]
+        ) {
+            let phone_number_id =
+                req.body.entry[0].changes[0].value.metadata.phone_number_id;
+            let from = req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
+            let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body; // extract the message text from the webhook payload
+            axios({
+                method: "POST", // Required, HTTP method, a string, e.g. POST, GET
+                url:
+                    "https://graph.facebook.com/v12.0/" +
+                    phone_number_id +
+                    "/messages?access_token=" +
+                    token,
+                data: {
+                    messaging_product: "whatsapp",
+                    to: from,
+                    text: { body: "Ack: " + msg_body },
+                },
+                headers: { "Content-Type": "application/json" },
+            });
+        }
+        res.sendStatus(200);
+    } else {
+        // Return a '404 Not Found' if event is not from a WhatsApp API
+        res.sendStatus(404);
+    }
+});
 
-    if (message.type === "image") promise = Whatsapp.sendMessage(phoneID, phone, new Media.Image(message.image.id, true, `Nice photo, ${name}`));
+// Accepts GET requests at the /webhook endpoint. You need this URL to setup webhook initially.
+// info on verification request payload: https://developers.facebook.com/docs/graph-api/webhooks/getting-started#verification-requests 
+app.get("/webhook", (req, res) => {
+    /**
+     * UPDATE YOUR VERIFY TOKEN
+     *This will be the Verify Token value when you set up webhook
+    **/
+    const verify_token = process.env.VERIFY_TOKEN;
 
-    if (message.type === "document") promise = Whatsapp.sendMessage(phoneID, phone, new Media.Document(message.document.id, true, undefined, "Our document"));
+    // Parse params from the webhook verification request
+    let mode = req.query["hub.mode"];
+    let token = req.query["hub.verify_token"];
+    let challenge = req.query["hub.challenge"];
 
-    if (message.type === "contacts") promise = Whatsapp.sendMessage(phoneID, phone, new Contacts.Contacts(
-        [
-            new Contacts.Name(name, "First name", "Last name"),
-            new Contacts.Phone(phone),
-            new Contacts.Birthday("2022", "04", "25"),
-        ],
-        [
-            new Contacts.Name("John", "First name", "Last name"),
-            new Contacts.Organization("Company", "Department", "Title"),
-            new Contacts.Url("https://www.google.com", "WORK"),
-        ]
-    ));
-
-    console.log(await promise ?? "There are more types of messages, such as locations, templates, interactives, reactions and all the other media types.");
-
-    Whatsapp.markAsRead(phoneID, message.id);
-}
-
-Whatsapp.logSentMessages((phoneID, phone, message, raw_data) => {
-    console.log(`Bot ${phoneID} sent to user ${phone} ${JSON.stringify(message)}\n\n${JSON.stringify(raw_data)}`);
+    // Check if a token and mode were sent
+    if (mode && token) {
+        // Check the mode and token sent are correct
+        if (mode === "subscribe" && token === verify_token) {
+            // Respond with 200 OK and challenge token from the request
+            console.log("WEBHOOK_VERIFIED");
+            res.status(200).send(challenge);
+        } else {
+            // Responds with '403 Forbidden' if verify tokens do not match
+            res.sendStatus(403);
+        }
+    }
 });
