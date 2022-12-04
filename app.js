@@ -4,13 +4,13 @@ const token = process.env.WHATSAPP_TOKEN;
 const request = require("request"),
     express = require("express"),
     body_parser = require("body-parser"),
-    axios = require("axios").default,
+
     app = express().use(body_parser.json()); // creates express http server
 
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log("webhook is listening"));
-
+const axios = require("axios")
 // Accepts POST requests at /webhook endpoint
 app.post("/webhook", (req, res) => {
     // Parse the request body from the POST
